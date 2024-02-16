@@ -17,7 +17,7 @@ function getNextRecord() {
 }
 
 function getArtData(rowNum) {
-    fetch('/data/artwork-data.csv')
+    fetch('https://raw.githubusercontent.com/shannonvv/met-illegible-text/main/data/artwork-data.csv')
       .then(response => response.text())
       .then(csvData => {
         const lines = csvData.split('\n');
