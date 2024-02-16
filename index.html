@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="generator">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Illegible text at The Met</title>
+    <link rel="stylesheet" href="/_base.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main>
+
+        <section id = 'canvasSection'></section>
+        <section id = 'pgSection'></section>
+        <section id = 'form'>
+        <div>
+            <div id="buttons">
+                <button type="button" class="button" id="nextButton">Next word</button>
+                <button type="button" class="button" id="resetButton">Reset</button>
+                <button type="button" class="button" id="toggle_button">Audio on</button>
+            </div>
+        <table>
+            <tbody>
+
+                <tr>
+                    <td>
+                        <p id="label">Selected Letter</p>
+                        <span class="toggle-btn" onclick="toggleContent(this)">▼</span>
+                        <div class="expandable-content expanded expandable-content-black" id = "black-square">
+                            <div id="selectedContainer">
+                                <img id="charDropDown" src="">
+                            </div>
+                            <!-- expandable content goes here -->
+                        </div>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>
+                        <p id = 'label'>Inscription</p>
+                        <span class="toggle-btn" onclick="toggleContent(this)">▼</span>
+                        <h1>
+                            <div class="expandable-content expanded">
+                            <p id = 'inscription'></p>
+                        </h1>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <span class="toggle-btn" onclick="toggleContent(this)">▼</span>
+                        <p id="label">Artwork</p>
+                        <div class="expandable-content expanded">
+                            <div id="paintingContainer">
+                                <img id="paintingImage" src="" alt="Painting">
+                                <div id="boundingBox"></div>
+                                <figcaption id="figCaption"></figcaption>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="toggle-btn" onclick="toggleContent(this)">▶</span>
+                        <p id="label">Audio</p>
+
+                        <div class="expandable-content">               
+                            <div class="slider-container">
+                                <div class="input-container">
+                                    <label class="slider-label">Volume</label>
+                                    <input name="volume" type="range" min="-24" max="-1" step=".1" value="-12" class="slider" oninput="updateSliderValue(this, 'volume-value')">
+                                    <label id="input-label"><span id="volume-value">-12</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </section>
+
+    <!-- tone.js -->
+    <script src="https://cdn.jsdelivr.net/npm/tone@14"></script>  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js"></script>
+    <!-- p5 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"></script>
+    <!-- TensorFlow.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js" type="text/javascript"></script>
+    <!-- tfjs-vis -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis/dist/tfjs-vis.umd.min.js"></script>
+
+    <script src="canvas.js"></script>
+    <script src="classifier.js"></script>
+    <script src="sound.js"></script>
+    <script src="process-image.js"></script>
+    <script src="dropdown.js"></script>
+    <script src="artwork-data.js"></script>
+
+
+</main>
+</body>
+</html>
