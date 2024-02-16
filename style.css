@@ -1,0 +1,213 @@
+body {
+	font-family: Helvetica, sans-serif;
+	font-size: 13px;
+	line-height: 1.;
+	background-color: white;
+	color:black;
+}
+
+main {
+	display:grid;
+	min-height: 100vh;
+	grid-template-columns: 1fr 320px;
+	grid-template-rows: auto 1fr auto;
+	grid-template-areas: "display logo" "display form" ;
+}
+
+canvas {
+    display: block;
+    border: 0px solid white; /* Optional border for the canvas */
+    z-index: 3;
+}
+  
+#form {
+    grid-area: form;
+    z-index: 0;
+    background-color: #ffffff;
+    justify-content: space-between;
+    padding: 5px;
+    margin: 0px;
+}
+
+#canvasSection {
+    grid-area: display;
+}
+ 
+#pgSection {
+    z-index: 3;
+}
+  
+h1 {
+  margin-top: 0px;
+  margin: 0px;
+  padding: 0px;
+  font-weight: normal;
+  line-height: 1.4;
+}
+
+#label {
+  text-align: center;
+  font-size: 13px;
+  padding: 0px;
+  margin: 8px;
+}
+
+#letter {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin: 0px; /* Add margin for spacing between squares */
+    border: 0px solid black; /* Add a 1px solid black border */
+}
+
+
+#paintingContainer {
+    position: relative;
+    max-width: 100%;
+}
+
+  #paintingImage {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  #boundingBox {
+    position: absolute;
+    border: 1px solid #00FF00; /* Adjust the border style as needed */
+    box-sizing: border-box;
+    pointer-events: none; /* Allow interactions with the image underneath */
+  }
+
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 10px;
+    margin-top: 0px;
+}
+
+td {
+  position: relative;
+  border-radius: 5px;
+  padding: 0px;
+  background-color: #e5e5e5;
+}
+
+.expandable-content {
+    display: none;
+    padding: 5px;
+}
+
+.toggle-btn {
+  cursor: pointer;
+  position: absolute;
+  top: 10px; /* Adjust the top value as needed */
+  left: 10px;
+  color: darkgray;
+}
+
+#buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center; /* Align items vertically in the center */
+}
+
+#selectedContainer {
+  background: black;
+  background-color: black;
+  border-radius: 5px;
+}
+
+.button {
+  flex-grow: 1;
+  border-radius: 10px;
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+  padding: 8px 8px;
+  cursor: pointer;
+  color: black;
+  background-color: #ffffff;
+  border: .5px solid black;
+  margin: 0 10px; /* Adjust margin as needed for spacing */
+  text-align: center;
+}
+
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px; /* Adjust the vertical gap as needed */
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Add this to justify content */
+  width: 100%; /* Ensure the width is 100% */
+}
+
+.slider-label {
+margin-right: 10px;
+font-size: 13px;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 5px;
+  padding: 1px;
+  width: 80%; /* Adjust the width as needed */
+  margin-top: 0px; /* Adjust the spacing between the label and slider */
+  background-color: #ededed;
+}
+
+#input-label {
+  margin-left: 10px;
+  font-size: 13px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: darkgrey;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+
+img {
+  max-height: 280px; /* Limit the height to 100 pixels */
+  height: auto;      /* Maintain the aspect ratio */
+  display: block;    /* Remove any default inline spacing */
+  margin: 0 auto;     /* Center the image horizontally */
+  background-color: black;
+}
+
+.expandable-content-black {
+  position: relative;
+}
+
+.expandable-content-black:before {
+  content: "";
+  display: block;
+}
+
+.expandable-content.expanded {
+  display: block;
+  margin: 0px;
+}
+
+
+.toggle-btn.expanded::before {
+  content: "▼";
+}
+
+
+
+
+
