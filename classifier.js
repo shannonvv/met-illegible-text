@@ -1,5 +1,5 @@
 let classificationLabels = []; 
-
+let confidenceLevels = [];
 
 function convertImageToTensor(pixelData) {
     // Translate pixel values into a list
@@ -50,9 +50,10 @@ function runPrediction() {
         const maxIndex = resultValues.indexOf(Math.max(...resultValues));
         const maxLabel = labels[maxIndex];
         confidenceLevel = Math.max(...resultValues)
-
-        classificationLabels.push(maxLabel);
-
+        confidenceLevels.push(confidenceLevel)
+        if (maxLabel) {
+            classificationLabels.push(maxLabel.toUpperCase());
+        }
         illegibleText = "";
 
         if (drawing) {

@@ -4,9 +4,11 @@ let originalWindowWidth = window.innerWidth;
 let originalWindowHeight = window.innerHeight;
 let drawing = false; 
 let charDropDown;
+let pattern;
+let finalConfidenceLevels = [];
 
 // model 
-const labels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "d", "e", "f", "g", "h", "n", "q", "r", "t"]
+const labels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "d", "e", "f", "g", "h", "n", "q", "r", "t"]
 const MODEL_URL = 'model/model.json'
 
 // artwork data
@@ -36,7 +38,7 @@ let confidenceLevel;
 let finalClassificationLabels = [];
 
 function preload() {
-    getArtData(5)
+    getArtData(6)
     // only urls with 'https://collectionapi.metmuseum.org' work
 }
 
@@ -79,7 +81,7 @@ function addArtwork() {
             scaledBoxHeight = Math.round(boxHeight * scaledPaintingRatio);
             scaledBoxWidth = Math.round(boxWidth * scaledPaintingRatio);
         } else {
-            let scaledPaintingHeight = parseInt(formWidth) - 40;
+            let scaledPaintingHeight = parseInt(formWidth);
             let scaledPaintingWidth = scaledPaintingHeight * paintingAspectRatio;
             let scaledPaintingRatio = scaledPaintingWidth / originalPaintingWidth
             let paintingYOffset =  (scaledPaintingHeight - scaledPaintingWidth)/2
@@ -92,24 +94,27 @@ function addArtwork() {
         let paintingImage = document.getElementById('paintingImage');
         paintingImage.src = paintingUrl;
             
-        let boundingBox = document.getElementById('boundingBox');
-        boundingBox.style.width = scaledBoxWidth + 'px';
-        boundingBox.style.height = scaledBoxHeight + 'px';
-        boundingBox.style.left =  scaledBoxLeft + 'px';
-        boundingBox.style.top = scaledBoxTop + 'px';
+        //let boundingBox = document.getElementById('boundingBox');
+        //boundingBox.style.width = scaledBoxWidth + 'px';
+        //boundingBox.style.height = scaledBoxHeight + 'px';
+        //boundingBox.style.left =  scaledBoxLeft + 'px';
+        //boundingBox.style.top = scaledBoxTop + 'px';
     });
         
     // create an anchor element for the painting thumbnail caption
     let linkElement = document.createElement('a');
-    linkElement.href = recordUrl;
+    linkElement.href = recordUrl || 'https://www.metmuseum.org/art/collection/search?'; // Use recordUrl if available, otherwise default URL
     linkElement.target = '_blank';
-    linkElement.textContent = 'The Met’s digital collections';
+    linkElement.textContent = `Visit The Met’s digital collections to learn more about ${artTitle} by ${artistName}, ${artDate}.`;
+    
+    // Create a text node for the arrow symbol
+    let arrowNode = document.createTextNode('\u2192'); // Unicode character code for right arrow
 
     // concatenate the paragraph elements
     let paragraph = document.createElement('p');
-    paragraph.textContent = `Visit `;
+    paragraph.appendChild(arrowNode); // Append arrow symbol
+    paragraph.appendChild(document.createTextNode(' ')); // Add space after arrow
     paragraph.appendChild(linkElement);
-    paragraph.textContent += ` to learn more about ${artTitle} by ${artistName}, ${artDate}.`;
     
     let figCaption = document.getElementById('figCaption');
     figCaption.appendChild(paragraph);
@@ -182,11 +187,7 @@ function drawBoundingBox() {
                 let classLabel = finalClassificationLabels[i]
                 text(classLabel, selectedRectangles[i].startX + labelDim/5, selectedRectangles[i].startY-labelDim/4);
                 noFill() 
-
-                if (audioStarted === true) {
-                    let newFreq = mapValue(confidenceLevel, 0, 1, 50, 200);
-                    synth.frequency.value = newFreq;
-        }}}
+        }}
         
         // draw bounding rectangle
         rect(rectangles[0].startX, rectangles[0].startY, mouseX-rectangles[0].startX, mouseY-rectangles[0].startY);
@@ -203,7 +204,6 @@ function drawBoundingBox() {
             text(lastClassLabel, rectangles[0].startX + labelDim/5, rectangles[0].startY-labelDim/4);
         }
         
-        // for testing - copy rectangle content into canvas
         // let newinputImage = inputImage.copy(canvas, startX, startY, rectWidth, rectHeight, 0, 0, width, height);
 
         // get the pixels inside of the final bounding box position
@@ -272,10 +272,10 @@ function createPaddedImage(sampledImage) {
 
     graphicsBuffer.image(invertedPaddedInput, offsetX, offsetY, newWidth, newHeight);
 
-    charDropDown = document.getElementById('charDropDown');
-    charDropDown.width = formWidth/2;
-    charDropDown.height = formWidth / 2 * (newHeight / newWidth); // Maintain aspect ratio
-    charDropDown.src = graphicsBuffer.canvas.toDataURL(); // Set the data URL of the charDropDown element
+    // charDropDown = document.getElementById('charDropDown');
+    // charDropDown.width = formWidth/2;
+    // charDropDown.height = formWidth / 2 * (newHeight / newWidth); // Maintain aspect ratio
+    // charDropDown.src = graphicsBuffer.canvas.toDataURL(); // Set the data URL of the charDropDown element
 }
    
 function mousePressed() {
@@ -285,9 +285,7 @@ function mousePressed() {
     if (startX < canvas.width) {
         drawing = true;
         runPrediction();
-        if (audioStarted === true) {
-            playSynth(confidenceLevel);
-        }
+
 }}
   
 function mouseReleased() {
@@ -295,11 +293,6 @@ function mouseReleased() {
     startY = mouseY;
     
     drawing = false;  
-
-    if (audioStarted === true) {
-        synth.triggerAttackRelease(synth.frequency.value, .1);
-        //beeping = false;
-    }
     
     // add label to the selectedRectangle
     if (selectedRectangle && startX < canvas.width) {
@@ -321,10 +314,10 @@ function mouseReleased() {
             }
         }
 
-
         setTimeout(function() {
             let chosenLabel = classificationLabels[classificationLabels.length-1];
             finalClassificationLabels.push(chosenLabel);
+            finalConfidenceLevels.push(confidenceLevels[classificationLabels.length-1])
     
             if (sortedClassificationLabels) {
                 sortedClassificationLabels = selectedRectangles.map(rect => ({
@@ -354,9 +347,9 @@ function mouseReleased() {
             for (let i = 0; i < sortedClassificationLabels.length; i++) {
                 illegibleText += '\n' + sortedClassificationLabels[i].label
             }
-            drawInscription()      
+            drawInscription()    
         }, 500); // 500 milliseconds
-    }
+        }
 }
 
 
@@ -391,6 +384,26 @@ function updatedSelectedRectDims() {
     }
 }
 
+function createDropdownMenu(x, y, selectedLetter) {
+    // Define the letters of the alphabet
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+    // Create a dropdown menu
+    let dropdown = createSelect();
+    dropdown.position(x, y - labelDim); // Adjust the position as needed
+    dropdown.style("background-color", "#ff0000"); // Set background color
+    dropdown.style("border", "1px solid #000"); // Set border
+    dropdown.style("font-size", "12px"); // Set font size
+
+    // Add options for each letter
+    letters.forEach(letter => {
+        dropdown.option(letter);
+    });
+
+    // Set the selected option based on the selectedLetter parameter
+    dropdown.selected(selectedLetter);
+};
+
 function windowResized() {
     resizeCanvas(windowWidth - formWidth, windowHeight);
     handwritingBuffer = createGraphics(canvas.width, canvas.height);
@@ -400,6 +413,28 @@ function windowResized() {
     }
 }
 
+
+function showTab(tabName) {
+    // Hide all content elements
+    let contents = document.querySelectorAll('.content');
+    contents.forEach(content => {
+      content.classList.remove('active');
+    });
+  
+    // Show the content corresponding to the selected tab
+    let contentToShow = document.getElementById(tabName + '-content');
+    contentToShow.classList.add('active');
+  
+    // Remove 'selected' class from all tabs
+    let tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.classList.remove('selected');
+    });
+  
+    // Add 'selected' class to the clicked tab
+    let selectedTab = document.getElementById(tabName + '-tab');
+    selectedTab.classList.add('selected');
+  }
 
 document.getElementById("resetButton").addEventListener("click", () => reset());
 document.getElementById("nextButton").addEventListener("click", () => getNextRecord());

@@ -17,11 +17,13 @@ function getNextRecord() {
 }
 
 function getArtData(rowNum) {
-    fetch('https://raw.githubusercontent.com/shannonvv/met-illegible-text/main/data/artwork-data.csv')
+    //fetch('https://raw.githubusercontent.com/shannonvv/met-illegible-text/main/data/artwork-data.csv')
+    fetch('/data/artwork-data.csv')
       .then(response => response.text())
       .then(csvData => {
         const lines = csvData.split('\n');
-        let row = rowNum;
+        //let row = rowNum;
+        let row = 1;
   
         if (row < lines.length) {
           // Split the row into fields
@@ -29,9 +31,11 @@ function getArtData(rowNum) {
 
           // Assign the cell data to variables
           [recordUrl, apiUrl, imageUrl, paintingUrl, inscriptionText, artistName, artDate, artTitle, thresholdLevel, boxLeft, boxTop, boxWidth, boxHeight, angle, invert] = fields.map(field => field.trim());
-                
-          // Ensure numeric fields are parsed to integers
-          [boxLeft, boxTop, boxWidth, boxHeight] = [boxLeft, boxTop, boxWidth, boxHeight].map(val => Math.round(parseInt(val)));
+          console.log(recordUrl)
+          
+          // parse numeric fields to integers
+          // [boxLeft, boxTop, boxWidth, boxHeight] = [boxLeft, boxTop, boxWidth, boxHeight].map(val => Math.round(parseInt(val)));
+        
         } else {
           console.error("Row index out of range");
         };

@@ -11,80 +11,52 @@
 
 <body>
     <main>
-
-        <section id = 'canvasSection'></section>
+        <section id = "test-text"></section>
+        <section id = 'canvasSection'>
+        </section>
         <section id = 'pgSection'></section>
         <section id = 'form'>
-        <div>
-            <div id="buttons">
-                <button type="button" class="button" id="nextButton">Next word</button>
-                <button type="button" class="button" id="resetButton">Reset</button>
-                <button type="button" class="button" id="toggle_button">Audio on</button>
+    
+        
+            <div class="tab-container">
+                <div class="tab selected" id="inscription-tab" onclick="showTab('inscription')">Inscription</div>
+                <div class="tab" id="artwork-tab" onclick="showTab('artwork')">Context</div>
             </div>
-        <table>
-            <tbody>
-
-                <tr>
-                    <td>
-                        <p id="label">Selected Letter</p>
-                        <span class="toggle-btn" onclick="toggleContent(this)">▼</span>
-                        <div class="expandable-content expanded expandable-content-black" id = "black-square">
-                            <div id="selectedContainer">
-                                <img id="charDropDown" src="">
-                            </div>
-                            <!-- expandable content goes here -->
-                        </div>
-                    </td>
-                </tr>
-
-
-                <tr>
-                    <td>
-                        <p id = 'label'>Inscription</p>
-                        <span class="toggle-btn" onclick="toggleContent(this)">▼</span>
-                        <h1>
-                            <div class="expandable-content expanded">
-                            <p id = 'inscription'></p>
-                        </h1>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <span class="toggle-btn" onclick="toggleContent(this)">▼</span>
-                        <p id="label">Artwork</p>
-                        <div class="expandable-content expanded">
-                            <div id="paintingContainer">
-                                <img id="paintingImage" src="" alt="Painting">
-                                <div id="boundingBox"></div>
-                                <figcaption id="figCaption"></figcaption>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="toggle-btn" onclick="toggleContent(this)">▶</span>
-                        <p id="label">Audio</p>
-
-                        <div class="expandable-content">               
-                            <div class="slider-container">
-                                <div class="input-container">
-                                    <label class="slider-label">Volume</label>
-                                    <input name="volume" type="range" min="-24" max="-1" step=".1" value="-12" class="slider" oninput="updateSliderValue(this, 'volume-value')">
-                                    <label id="input-label"><span id="volume-value">-12</span></label>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
+                  
+            <div class="content-container">
+                <div class="content active" id="inscription-content">
+                      <!-- Content for Inscription tab -->
+                    <p id="inscription"></p>
+                    <div id="letterBlocks"></div>
+                </div>
+            
+                <div class="content" id="artwork-content">
+                      <!-- Content for Artwork tab -->
+                    <div id="paintingContainer">
+                        <img id="paintingImage" src="" alt="Painting">
+                        <div id="boundingBox"></div>
+                        <figcaption id="figCaption"></figcaption>
+                    </div>
+                </div>
+            </div>
+        <!--
+        <div id="submission-button-container">
+            
+            <button type="button" id="submission-button">Submit prediction</button>
+            <select id="dropdown-menu">
+              <option value="option1">Option 1</option>
+              <option value="option2">Option 2</option>
+              <option value="option3">Option 3</option>
+              
+            </select>
+        </div>
+        -->
+        <div id="buttons">
+            <button type="button" class="button" id="resetButton">Reset</button>
+            <button type="button" class="button" id="nextButton">Main menu</button>
+        </div>
     </section>
 
-    <!-- tone.js -->
-    <script src="https://cdn.jsdelivr.net/npm/tone@14"></script>  
     <!-- p5 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"></script>
@@ -95,9 +67,7 @@
 
     <script src="canvas.js"></script>
     <script src="classifier.js"></script>
-    <script src="sound.js"></script>
     <script src="process-image.js"></script>
-    <script src="dropdown.js"></script>
     <script src="artwork-data.js"></script>
 
 
