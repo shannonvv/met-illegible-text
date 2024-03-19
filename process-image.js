@@ -19,7 +19,6 @@ let letterBlocksText = []
 
 function processImage() {
 
-
     let croppedImage = originalPainting.get(boxLeft,boxTop,boxWidth,boxHeight);
 
     if (invert === '1'){
@@ -35,38 +34,13 @@ function processImage() {
     enlargedImage = createImage(croppedImage.width * scaleToFit, croppedImage.height * scaleToFit);
     enlargedImage.copy(croppedImage, 0, 0, croppedImage.width, croppedImage.height, 0, 0, enlargedImage.width, enlargedImage.height);
 
-    enlargedImage.loadPixels();
-
-    //image(enlargedImage, 0, 0)
-
-    handwriting = []
-    for (let i = 0; i < enlargedImage.width; i++) {
-         for (let j = 0; j < enlargedImage.height; j++) {
-             let index = (i + j * enlargedImage.width) * 4;
-
-             let threshold = 50;
-             if (enlargedImage.pixels[index] < threshold) {
-                 smooth(true);
-                 stroke(0);
-                 strokeWeight(1);
-                 let x = i - enlargedImage.width/2;
-                 let y = j - enlargedImage.height/2;
-                 //point(x, y);
-                 handwriting.push({ x, y });
-             }}
-     }
-
+    //enlargedImage.loadPixels();
+    enlargedImage.filter(POSTERIZE, 2);
+    
     // calculate the aspect ratio
-    let { minX, maxX, minY, maxY } = calculateMinMax();
-    xRange = abs(maxX-minX);
-    yRange = abs(maxY-minY);
-    aspectRatio = xRange/yRange;
-
-    // Adjust percentage of points
-    let reductionPercentage = 0; 
-    let targetLength = Math.ceil(handwriting.length * (1 - reductionPercentage / 100));
-    let reducedHandwriting = handwriting.filter((item, index) => index % Math.ceil(handwriting.length / targetLength) === 0);
-    handwriting = reducedHandwriting;
+    xRange = enlargedImage.width
+    yRange = enlargedImage.height
+    aspectRatio = xRange/yRange
 
     updateHandwritingBuffer();
     drawInscription()  
@@ -95,81 +69,27 @@ function calculateMinMax() {
 function updateHandwritingBuffer() {
     newWidth = windowWidth - formWidth;
     newHeight = windowHeight;
+    aspectRatio = enlargedImage.width/enlargedImage.height
 
-    if (!handwritingBuffer) {
-        handwritingBuffer = createGraphics(newWidth,newHeight);
-    }
-    
-    handwritingBuffer.background(255);
-    handwritingBuffer.noFill();
-    handwritingBuffer.strokeWeight(5);
-    handwritingBuffer.stroke(0);
-
-    // // calculate the aspect ratio
-    let { minX, maxX, minY, maxY } = calculateMinMax();
-    let xRange = abs(maxX-minX);
-    let yRange = abs(maxY-minY);
-    let largestDim = Math.max(xRange, yRange);
-    aspectRatio = xRange/yRange
-
-    let newMaxY, newMinY, newMaxX, newMinX;
-
-    if (largestDim === xRange) {  //  width is the largest dimension
+    if (xRange > yRange) {  //  width is the largest dimension
+        enlargedImage.width = newWidth
+        enlargedImage.height = newWidth / aspectRatio
+        yRange = enlargedImage.height
         imageOffset = (newHeight - yRange) / 2;
-        newMaxY = maxY * aspectRatio;
-        newMinY = minY * aspectRatio;
+        image(enlargedImage, 0, imageOffset)
 
-        for (let point of handwriting) {
-            //let currentStrokeWeight = Math.floor(Math.random() * 10);
-            let currentStrokeWeight = 5
-            handwritingBuffer.strokeWeight(currentStrokeWeight);
-            handwritingBuffer.stroke(0);
-            
-
-            let rotatedX = point.x * Math.cos(angle) - point.y * Math.sin(angle);
-            let rotatedY = point.x * Math.sin(angle) + point.y * Math.cos(angle);
-
-            let normalizedX = map(rotatedX, minX, maxX, 0, canvas.width);
-            let normalizedY = map(rotatedY, minY, maxY, 0 + imageOffset, canvas.width/aspectRatio + imageOffset);    
-     
-            handwritingBuffer.point(normalizedX, normalizedY);
-        }
-
-
-    } else if (largestDim === yRange) { //  height is the largest dimension
-        imageOffset = (newHeight - yRange) / 2.5;
-        newMaxX = maxX * aspectRatio;
-        newMinX = minX * aspectRatio;
-
-        for (let point of handwriting) {
-            let currentStrokeWeight = Math.floor(Math.random() * 10);
-            handwritingBuffer.strokeWeight(currentStrokeWeight);
-            handwritingBuffer.stroke(0);
-
-            let normalizedX = map(point.x, minX, maxX, 0, canvas.width);
-            let normalizedY = map(point.y, minY, maxY, 0 + imageOffset, canvas.width/aspectRatio + imageOffset);    
-            handwritingBuffer.point(normalizedX, normalizedY);
-        }
+    } else if (yRange > xRange) { //  height is the largest dimension
+        enlargedImage.height = newHeight
+        enlargedImage.width = newHeight / aspectRatio
+        xRange = enlargedImage.width
+        imageOffset = (newWidth - xRange) / 2.5;
+        image(enlargedImage, imageOffset, 0)
 
     } else {
-        
         console.log('There is no clear distinction between width and height.');
     }
-    image(handwritingBuffer, 0, 0, newWidth, newHeight);
 }
 
-
-function updateBufferSize() {
-    formWidth = document.getElementById('form').offsetWidth;
-    let bufferWidth = windowWidth - formWidth;
-    let bufferHeight = windowHeight;
-    updateHandwritingBuffer();
-
-    if (!handwritingBuffer || handwritingBuffer.width !== bufferWidth || handwritingBuffer.height !== bufferHeight) {
-         handwritingBuffer = createGraphics(bufferWidth, bufferHeight);
-         updateHandwritingBuffer();
-    }
-}
 
 function drawInscription() {
     illegibleText = illegibleText || "&nbsp;[illegible text]&nbsp;";
@@ -255,7 +175,6 @@ function drawInscription() {
              letterBlocks.innerHTML += `<span>${similarWords}</span>`;
              letterBlocks.innerHTML += '</p>';
              letterBlocks.innerHTML += '<br>';
-
         }
 
         let eventListenersAdded = new Array(squareList.length).fill(false);

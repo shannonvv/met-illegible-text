@@ -74,14 +74,14 @@ function addArtwork() {
         let scaledBoxTop, scaledBoxLeft, scaledBoxHeight, scaledBoxWidth;
 
         if (originalPaintingWidth > originalPaintingHeight) {
-            let scaledPaintingWidth = formWidth - 40;
+            let scaledPaintingWidth = 280;
             let scaledPaintingRatio = scaledPaintingWidth / originalPaintingWidth
             scaledBoxTop = Math.round(boxTop * scaledPaintingRatio);
             scaledBoxLeft = Math.round(boxLeft * scaledPaintingRatio);
             scaledBoxHeight = Math.round(boxHeight * scaledPaintingRatio);
             scaledBoxWidth = Math.round(boxWidth * scaledPaintingRatio);
         } else {
-            let scaledPaintingHeight = parseInt(formWidth);
+            let scaledPaintingHeight = 280;
             let scaledPaintingWidth = scaledPaintingHeight * paintingAspectRatio;
             let scaledPaintingRatio = scaledPaintingWidth / originalPaintingWidth
             let paintingYOffset =  (scaledPaintingHeight - scaledPaintingWidth)/2
@@ -93,12 +93,12 @@ function addArtwork() {
 
         let paintingImage = document.getElementById('paintingImage');
         paintingImage.src = paintingUrl;
-            
-        //let boundingBox = document.getElementById('boundingBox');
-        //boundingBox.style.width = scaledBoxWidth + 'px';
-        //boundingBox.style.height = scaledBoxHeight + 'px';
-        //boundingBox.style.left =  scaledBoxLeft + 'px';
-        //boundingBox.style.top = scaledBoxTop + 'px';
+
+        let boundingBox = document.getElementById('boundingBox');
+        boundingBox.style.width = scaledBoxWidth + 'px';
+        boundingBox.style.height = scaledBoxHeight + 'px';
+        boundingBox.style.left =  scaledBoxLeft + 'px';
+        boundingBox.style.top = scaledBoxTop + 'px';
     });
         
     // create an anchor element for the painting thumbnail caption
@@ -165,9 +165,10 @@ function drawBoundingBox() {
 
 
     if (drawing) {
+
         let rectWidth = mouseX-newRect.startX;
         let rectHeight = mouseY-newRect.startY;
-
+        background(255)
         noFill();
         stroke(0, 255, 0);
         updateHandwritingBuffer()
@@ -265,17 +266,11 @@ function createPaddedImage(sampledImage) {
             }
         }
     }
-
     invertedPaddedInput.updatePixels();
     invertedPaddedInput.filter(THRESHOLD);
     invertedPaddedInput.filter(ERODE);
 
     graphicsBuffer.image(invertedPaddedInput, offsetX, offsetY, newWidth, newHeight);
-
-    // charDropDown = document.getElementById('charDropDown');
-    // charDropDown.width = formWidth/2;
-    // charDropDown.height = formWidth / 2 * (newHeight / newWidth); // Maintain aspect ratio
-    // charDropDown.src = graphicsBuffer.canvas.toDataURL(); // Set the data URL of the charDropDown element
 }
    
 function mousePressed() {
@@ -384,35 +379,34 @@ function updatedSelectedRectDims() {
     }
 }
 
-function createDropdownMenu(x, y, selectedLetter) {
-    // Define the letters of the alphabet
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+// function createDropdownMenu(x, y, selectedLetter) {
+//     // Define the letters of the alphabet
+//     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-    // Create a dropdown menu
-    let dropdown = createSelect();
-    dropdown.position(x, y - labelDim); // Adjust the position as needed
-    dropdown.style("background-color", "#ff0000"); // Set background color
-    dropdown.style("border", "1px solid #000"); // Set border
-    dropdown.style("font-size", "12px"); // Set font size
+//     // Create a dropdown menu
+//     let dropdown = createSelect();
+//     dropdown.position(x, y - labelDim); // Adjust the position as needed
+//     dropdown.style("background-color", "#ff0000"); // Set background color
+//     dropdown.style("border", "1px solid #000"); // Set border
+//     dropdown.style("font-size", "12px"); // Set font size
 
-    // Add options for each letter
-    letters.forEach(letter => {
-        dropdown.option(letter);
-    });
+//     // Add options for each letter
+//     letters.forEach(letter => {
+//         dropdown.option(letter);
+//     });
 
-    // Set the selected option based on the selectedLetter parameter
-    dropdown.selected(selectedLetter);
-};
+//     // Set the selected option based on the selectedLetter parameter
+//     dropdown.selected(selectedLetter);
+// };
 
 function windowResized() {
     resizeCanvas(windowWidth - formWidth, windowHeight);
-    handwritingBuffer = createGraphics(canvas.width, canvas.height);
+    //handwritingBuffer = createGraphics(canvas.width, canvas.height);
     updateHandwritingBuffer()
     if (selectedRectangle) {
           updatedSelectedRectDims()
     }
 }
-
 
 function showTab(tabName) {
     // Hide all content elements
